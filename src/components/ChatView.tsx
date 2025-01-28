@@ -15,7 +15,7 @@ import axios from "axios";
 function ChatView() {
   const { id } = useParams();
   const convex = useConvex();
-  const { inputMessage, setInputMessage } = useContext(MessageContext);
+  const { inputMessage = [], setInputMessage } = useContext(MessageContext);
   const { user, setUser } = useContext(UserDetailContext);
   const [userInput, setUserInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -86,6 +86,20 @@ function ChatView() {
   return (
     <div className="relative flex flex-col gap-2 h-[85vh] w-full">
       <div className="flex-1 overflow-y-scroll flex gap-1 flex-col p-3 scrollbar-hide">
+        {inputMessage.length == 0 && (
+          <div className="flex flex-col gap-2 items-center justify-center h-full">
+            <Image
+              src={user.image}
+              alt="userImage"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
+            <p className="text-white text-center">
+               WelCome AI Coder App
+            </p>
+          </div>
+        )}
         {inputMessage?.map((msg, index) => (
           <div
             key={index}
