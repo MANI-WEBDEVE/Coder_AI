@@ -7,7 +7,13 @@ import { MessageContext } from "@/context/MessageContext";
 import Colors from "@/data/Colors";
 import { UserDetailContext } from "@/context/userDetailContext";
 import Image from "next/image";
-import { ArrowRight, Bot, Link, LoaderCircleIcon, LoaderPinwheel } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  Link,
+  LoaderCircleIcon,
+  LoaderPinwheel,
+} from "lucide-react";
 import Lookup from "@/data/Lookup";
 import Prompt from "@/data/Prompt";
 import axios from "axios";
@@ -17,9 +23,9 @@ function ChatView() {
   const convex = useConvex();
   const { inputMessage = [], setInputMessage } = useContext(MessageContext);
   const { user, setUser } = useContext(UserDetailContext);
-  const [userInput, setUserInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const updateWorkSpaceMessages = useMutation(api.workspace.updateWorkSpace)
+  const [userInput, setUserInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const updateWorkSpaceMessages = useMutation(api.workspace.updateWorkSpace);
   useEffect(() => {
     id && getWorkSpace();
   }, [id]);
@@ -32,44 +38,37 @@ function ChatView() {
   };
 
   const GetAiResponse = async () => {
-    const PROMPT = JSON.stringify(inputMessage) + Prompt.CHAT_PROMPT
-    try{
-      setLoading(true)
-      const response = await axios.post('/api/ai-chat',{
-        prompt:PROMPT
-      })
-      console.log(response.data.res)
-      const aiResp={
+    const PROMPT = JSON.stringify(inputMessage) + Prompt.CHAT_PROMPT;
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/ai-chat", {
+        prompt: PROMPT,
+      });
+      const aiResp = {
         role: "ai",
         content: response.data.res,
-      }
-      setInputMessage((prev:any) => [
-        ...prev,
-        aiResp
-      ]);
+      };
+      setInputMessage((prev: any) => [...prev, aiResp]);
       await updateWorkSpaceMessages({
-        workspaceId:id as any,
-        messages:[...inputMessage, aiResp]
-      })
-    }catch(err){
-      console.log(err)
-      setLoading(false)
-    } 
-    finally{
-      setLoading(false)
+        workspaceId: id as any,
+        messages: [...inputMessage, aiResp],
+      });
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
-
-  }
+  };
 
   useEffect(() => {
-    if (inputMessage.length > 0){
-      const role = inputMessage[inputMessage.length -1].role
-      if(role == 'user'){
-        GetAiResponse()
+    if (inputMessage.length > 0) {
+      const role = inputMessage[inputMessage.length - 1].role;
+      if (role == "user") {
+        GetAiResponse();
       }
     }
-  }, [inputMessage])
-
+  }, [inputMessage]);
 
   const onGenerate = (input: string) => {
     setInputMessage((prev: any) => [
@@ -79,14 +78,13 @@ function ChatView() {
         content: input,
       },
     ]);
-    setUserInput('')
+    setUserInput("");
   };
 
-  console.log(inputMessage, "all");
   return (
     <div className="relative flex flex-col gap-2 h-[85vh] w-full">
       <div className="flex-1 overflow-y-scroll flex gap-1 flex-col p-3 scrollbar-hide">
-        {inputMessage.length == 0 && (
+        {inputMessage.length == 0 ? (
           <div className="flex flex-col gap-2 items-center justify-center h-full">
             <Image
               src={user.image}
@@ -95,50 +93,55 @@ function ChatView() {
               height={50}
               className="rounded-full"
             />
-            <p className="text-white text-center">
-               WelCome AI Coder App
-            </p>
+            <p className="text-white text-center">WelCome AI Coder App</p>
           </div>
+        ) : (
+          <>
+            {inputMessage.length > 0 &&
+              inputMessage?.map((msg, index) => (
+                <div
+                  key={index}
+                  className="p-3 rounded-lg"
+                  style={{ backgroundColor: Colors.CHAT_BACKGROUND }}
+                >
+                  {msg.role == "user" ? (
+                    <Image
+                      src={user.image}
+                      alt="userImage"
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <>
+                      <Bot className="text-blue-500" />
+                    </>
+                  )}
+                  <p className="text-white leading-7 text-sm">{msg.content}</p>
+                </div>
+              ))}
+          </>
         )}
-        {inputMessage?.map((msg, index) => (
+        {loading && (
           <div
-            key={index}
-            className="p-3 rounded-lg"
+            className="p-3 rounded-lg flex items-center gap-2"
             style={{ backgroundColor: Colors.CHAT_BACKGROUND }}
           >
-            {msg.role == "user" ? (
-              <Image
-                src={user.image}
-                alt="userImage"
-                width={30}
-                height={30}
-                className="rounded-full"
-              />
-            ) : (
-              <>
-                <Bot className="text-blue-500"/>
-              </>
-            )}
-            <p className="text-white leading-7 text-sm">{msg.content}</p>
+            <LoaderCircleIcon className="animate-spin" />
+            <p className="text-white">Genrating Response...</p>
           </div>
-        ))}
-        {
-          loading && (
-            <div className="p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: Colors.CHAT_BACKGROUND }}>
-              <LoaderCircleIcon className="animate-spin"/>
-              <p className="text-white">Genrating Response...</p>
-            </div>
-          )
-        }
+        )}
       </div>
       {/* Input section */}
+      <div className="flex items-end gap-2">
+        <Image src={user.image} width={30} height={30} alt="user-image" className="rounded-full "/>
       <div
         className="p-5 border rounded-xl max-w-xl w-full mt-3 "
         style={{ backgroundColor: Colors.BACKGROUND }}
       >
         <div className="flex gap-2">
           <textarea
-          value={userInput}
+            value={userInput}
             name=""
             id=""
             placeholder={Lookup.INPUT_PLACEHOLDER}
@@ -157,8 +160,10 @@ function ChatView() {
           <Link size={21} />
         </div>
       </div>
+      </div>
+
     </div>
   );
 }
-  
+
 export default ChatView;

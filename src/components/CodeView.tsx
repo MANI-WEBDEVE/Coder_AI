@@ -9,39 +9,72 @@ import {
 } from "@codesandbox/sandpack-react";
 import Lookup from "@/data/Lookup";
 import { MessageContext } from "@/context/MessageContext";
-import prompts from "@/data/Prompt"
+import prompts from "@/data/Prompt";
 import axios from "axios";
+import { useConvex, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useParams } from "next/navigation";
+import { Loader, Loader2 } from "lucide-react";
 function CodeView() {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState("code");
-  const [files, setFiles] = useState(Lookup.DEFAULT_FILE)
-  const {inputMessage, setInputMessage} = useContext(MessageContext)
+  const [files, setFiles] = useState(Lookup.DEFAULT_FILE);
+  const { inputMessage, setInputMessage } = useContext(MessageContext);
+  const updateFiles = useMutation(api.workspace.updateFiles);
+  const convex = useConvex();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const GetWorkSpaceFilesData = async () => {
+    try {
+      setIsLoading(true);
+      const GetFilesData = await convex.query(api.workspace.GetWorkSpace, {
+        workspaceId: id as any,
+      });
+      const mergedFile = { ...Lookup.DEFAULT_FILE, ...GetFilesData?.fileData };
+      setFiles(mergedFile);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => { 
+    GetWorkSpaceFilesData();
+  }, [id]);
 
   useEffect(() => {
-    if (inputMessage.length>0){
-      const role = inputMessage[inputMessage.length-1].role
-      if (role == "user"){
-        GenerateCodeAI()
+    if (inputMessage.length > 0) {
+      const role = inputMessage[inputMessage.length - 1].role;
+      if (role == "user") {
+        GenerateCodeAI();
       }
     }
-  }, [inputMessage])
+  }, [inputMessage]);
 
   const GenerateCodeAI = async () => {
-    const PROMPT = JSON.stringify(inputMessage)+" "+prompts.CODE_GEN_PROMPT
-    try{
-      const response = await axios.post("/api/gen-ai-code",{
-        prompt:PROMPT
-      })
-      const aiResp= response.data.data
-      const mergedFile = {...Lookup.DEFAULT_FILE, ...aiResp.files}
-      setFiles(mergedFile)
-    }catch(err){
-      console.log(err)
+    const PROMPT = JSON.stringify(inputMessage) + " " + prompts.CODE_GEN_PROMPT;
+    try {
+      setIsLoading(true);
+      const response = await axios.post("/api/gen-ai-code", {
+        prompt: PROMPT,
+      });
+      const aiResp = response.data.data;
+      const mergedFile = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
+      setFiles(mergedFile);
+      await updateFiles({
+        workspaceId: id as any,
+        files: aiResp.files,
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div>
+    <div className="relative">
       <div className="bg-[#181818] rounded w-full p-2">
         <div className="flex items-center gap-2 bg-black w-[150px] justify-center flex-wrap shrink-0 rounded-full py-1">
           <h2
@@ -58,23 +91,37 @@ function CodeView() {
           </h2>
         </div>
       </div>
-      <SandpackProvider template="react" files={files} theme={"dark"} customSetup={{dependencies: {...Lookup.DEPENDANCY}}} 
-      options={{
-        externalResources:['https://unpkg.com/@tailwindcss/browser@4']
-      }}
-      >
-        <SandpackLayout>
-          {activeTab == "code" ? (
-            <>
-            <SandpackFileExplorer style={{ height: "82vh" }} />
-            <SandpackCodeEditor style={{ height: "82vh" }} />
-            </>
-          ):(
-            <SandpackPreview style={{ height: "82vh" }} showNavigator={true}/>
+    
+          <SandpackProvider
+            template="react"
+            files={files}
+            theme={"dark"}
+            customSetup={{ dependencies: { ...Lookup.DEPENDANCY } }}
+            options={{
+              externalResources: ["https://unpkg.com/@tailwindcss/browser@4"],
+            }}
+          >
+            <SandpackLayout>
+              {activeTab == "code" ? (
+                <>
+                  <SandpackFileExplorer style={{ height: "82vh" }} />
+                  <SandpackCodeEditor style={{ height: "82vh" }} />
+                </>
+              ) : (
+                <SandpackPreview
+                  style={{ height: "82vh" }}
+                  showNavigator={true}
+                />
+              )}
+            </SandpackLayout>
+          </SandpackProvider>
+          {isLoading &&(
+
+            <div className="bg-[#181818cd] rounded w-full p-2 mt-2 flex items-center justify-center flex-col absolute h-full top-0 right-0">
+            <Loader className="animate-spin h-10 w-10" />
+          <h2 className="text-lg text-center  mt-2">Generating a Files 🤖</h2>
+        </div>
           )}
-          
-        </SandpackLayout>
-      </SandpackProvider>
     </div>
   );
 }

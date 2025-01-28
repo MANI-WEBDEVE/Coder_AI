@@ -4,7 +4,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div className='px-5 py-3'>
+    <div className='p-2 pr-8'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
             <ChatView/>
             <div className='col-span-2'>
