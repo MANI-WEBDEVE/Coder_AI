@@ -33,11 +33,10 @@ function Hero() {
       messages: [msg],
       user: user._id,
     });
-    console.log(workSpaceId);
     router.push(`/workspace/${workSpaceId}`);
   };
   return (
-    <div className="flex flex-col items-center mt-36 xl:mt-42 gap-2">
+    <div className="flex flex-col items-center mt-36 xl:mt-42 gap-2 w-full">
       <h2 className="font-bold text-4xl">{Lookup.HERO_HEADING}</h2>
       <p className="text-gray-400 font-medium">{Lookup.HERO_DESC}</p>
       <div

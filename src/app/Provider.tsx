@@ -55,7 +55,7 @@ function Provider({ children }: { children: React.ReactNode }) {
             >
 
               <Header />
-              <SidebarProvider>
+              <SidebarProvider defaultOpen={false }>
                 <AppSideBar/>
                {children}
               </SidebarProvider>

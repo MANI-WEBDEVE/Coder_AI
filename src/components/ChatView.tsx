@@ -13,10 +13,12 @@ import {
   Link,
   LoaderCircleIcon,
   LoaderPinwheel,
+  User2Icon,
 } from "lucide-react";
 import Lookup from "@/data/Lookup";
 import Prompt from "@/data/Prompt";
 import axios from "axios";
+import { useSidebar } from "./ui/sidebar";
 
 function ChatView() {
   const { id } = useParams();
@@ -26,6 +28,7 @@ function ChatView() {
   const [userInput, setUserInput] = useState("");
   const [loading, setLoading] = useState(false);
   const updateWorkSpaceMessages = useMutation(api.workspace.updateWorkSpace);
+  const {toggleSidebar}=useSidebar()
   useEffect(() => {
     id && getWorkSpace();
   }, [id]);
@@ -86,13 +89,15 @@ function ChatView() {
       <div className="flex-1 overflow-y-scroll flex gap-1 flex-col p-3 scrollbar-hide">
         {inputMessage.length == 0 ? (
           <div className="flex flex-col gap-2 items-center justify-center h-full">
-            <Image
+            {user.image&&(
+              <Image
               src={user.image}
               alt="userImage"
               width={50}
               height={50}
               className="rounded-full"
-            />
+              /> 
+            )}
             <p className="text-white text-center">WelCome AI Coder App</p>
           </div>
         ) : (
@@ -105,13 +110,17 @@ function ChatView() {
                   style={{ backgroundColor: Colors.CHAT_BACKGROUND }}
                 >
                   {msg.role == "user" ? (
-                    <Image
+                    <>
+                    {user.image&&(
+                      <Image
                       src={user.image}
                       alt="userImage"
                       width={30}
                       height={30}
                       className="rounded-full"
-                    />
+                      />
+                    )}
+                    </>
                   ) : (
                     <>
                       <Bot className="text-blue-500" />
@@ -134,7 +143,9 @@ function ChatView() {
       </div>
       {/* Input section */}
       <div className="flex items-end gap-2">
-        <Image src={user.image} width={30} height={30} alt="user-image" className="rounded-full "/>
+        {user.image&&(
+          <Image src={user.image } width={30} height={30} alt="user-image" className="rounded-full cursor-pointer" onClick={toggleSidebar}/>
+        )}
       <div
         className="p-5 border rounded-xl max-w-xl w-full mt-3 "
         style={{ backgroundColor: Colors.BACKGROUND }}
