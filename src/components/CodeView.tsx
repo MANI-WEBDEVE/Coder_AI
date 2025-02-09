@@ -15,6 +15,8 @@ import { useConvex, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useParams } from "next/navigation";
 import { Loader, Loader2 } from "lucide-react";
+import { countToken } from "./ChatView";
+import { UserDetailContext } from "@/context/userDetailContext";
 function CodeView() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("code");
@@ -23,6 +25,8 @@ function CodeView() {
   const updateFiles = useMutation(api.workspace.updateFiles);
   const convex = useConvex();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const UpdateToken = useMutation(api.users.updateToken)
+  const { user, setUser } = useContext(UserDetailContext);
 
   const GetWorkSpaceFilesData = async () => {
     try {
@@ -66,6 +70,14 @@ function CodeView() {
         workspaceId: id as any,
         files: aiResp.files,
       });
+
+      const token =Number(user.token)-Number(countToken(JSON.stringify(aiResp)))
+            // update token in DataBase
+            await UpdateToken({
+              userId:user._id as any,
+              token:token
+            })
+
     } catch (err) {
       console.log(err);
     } finally {

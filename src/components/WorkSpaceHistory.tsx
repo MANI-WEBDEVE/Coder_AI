@@ -30,7 +30,7 @@ const WorkSpaceHistory = () => {
     }
 
   return (
-    <div className='w-full h-full'>
+    <div className='w-full h-full '>
       <h2 className='text-md font-medium text-center mt-1 uppercase'>Your Chats</h2>
       <div className='bg-neutral-700/20 w-full h-full p-3 mt-3 rounded'>
       {isLoading ? (<>

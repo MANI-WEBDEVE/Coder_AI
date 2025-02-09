@@ -21,6 +21,7 @@ function Provider({ children }: { children: React.ReactNode }) {
     email: "",
     image: "",
     _id: "",
+    token: 0 as any
   });
   const convex = useConvex()
     const isAuthenticated = async () => {
@@ -33,6 +34,7 @@ function Provider({ children }: { children: React.ReactNode }) {
           email: result.email,
           image: result.image,
           _id: result._id,
+          token: result.token
         })
       }
     }

@@ -20,6 +20,10 @@ import Prompt from "@/data/Prompt";
 import axios from "axios";
 import { useSidebar } from "./ui/sidebar";
 
+export const countToken=(inputToken:string)=>{
+  return inputToken.trim().split(/\s+/).filter(word => word).length
+}
+
 function ChatView() {
   const { id } = useParams();
   const convex = useConvex();
@@ -29,6 +33,7 @@ function ChatView() {
   const [loading, setLoading] = useState(false);
   const updateWorkSpaceMessages = useMutation(api.workspace.updateWorkSpace);
   const {toggleSidebar}=useSidebar()
+  const UpdateToken = useMutation(api.users.updateToken)
   useEffect(() => {
     id && getWorkSpace();
   }, [id]);
@@ -56,6 +61,12 @@ function ChatView() {
         workspaceId: id as any,
         messages: [...inputMessage, aiResp],
       });
+      const token =Number(user.token)-Number(countToken(JSON.stringify(aiResp)))
+      // update token in DataBase
+      await UpdateToken({
+        userId:user._id as any,
+        token:token
+      })
     } catch (err) {
       console.log(err);
       setLoading(false);

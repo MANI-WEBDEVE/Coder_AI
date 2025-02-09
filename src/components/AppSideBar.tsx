@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 import { MessageCircleCode } from "lucide-react";
 import WorkSpaceHistory from "./WorkSpaceHistory";
 import Link from "next/link";
+import FooterSideBar from "./FooterSideBar";
 
 export function AppSideBar() {
   return (
@@ -27,15 +28,17 @@ export function AppSideBar() {
           <Image src={"/logo.webp"} width={29} height={29} alt="logo" />
         </div>
         </Link>
+        <Button className="mx-3 mt-3"><MessageCircleCode/> Start the New Chat</Button>
       </SidebarHeader>
-      <SidebarContent className="px-2 py-3">
-        <Button className="mx-3"><MessageCircleCode/> Start the New Chat</Button>
+      <SidebarContent className="px-2 py-3 scrollbar-hide">
         <SidebarGroup >
             <WorkSpaceHistory/>
         </SidebarGroup>
-        <SidebarGroup />
+        {/* <SidebarGroup /> */}
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter >
+        <FooterSideBar/>
+      </SidebarFooter>
     </Sidebar>
   );
 }

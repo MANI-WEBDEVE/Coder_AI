@@ -1,11 +1,13 @@
+'use client'
 import Image from "next/image";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button } from "./ui/button";
 import { UserDetailContext } from "@/context/userDetailContext";
 import Link from "next/link";
 
 function Header() {
   const { user, setUser } = useContext(UserDetailContext);
+ 
   return (
     <div className="p-4 flex items-center justify-between">
       <Link href={"/"}>
@@ -27,6 +29,7 @@ function Header() {
             <h2 className="uppercase text-sm bg-slate-600/25 px-2 rounded-lg">
               {user.name}
             </h2>
+            <p className="truncate ">{user.token }</p>
           </div>
         </>
       ) : (
