@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import Header from "@/components/Header";
 import { MessageContext } from "@/context/MessageContext";
@@ -7,7 +7,7 @@ import { UserDetailContext } from "@/context/userDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { AppSideBar } from "@/components/AppSideBar";
 function Provider({ children }: { children: React.ReactNode }) {
   const [inputMessage, setInputMessage] = useState([
@@ -55,10 +55,11 @@ function Provider({ children }: { children: React.ReactNode }) {
               enableSystem
               disableTransitionOnChange
             >
-
+              
               <Header />
               <SidebarProvider defaultOpen={false }>
                 <AppSideBar/>
+                
                {children}
               </SidebarProvider>
             </NextThemesProvider>
