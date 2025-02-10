@@ -1,6 +1,10 @@
 'use client'
 import Lookup from "@/data/Lookup";
 import React, { useContext } from "react";
+<<<<<<< HEAD
+=======
+import { loadStripe } from "@stripe/stripe-js";
+>>>>>>> f410b72d9312a407c68f1241bdcd6bb6c90561de
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { UserDetailContext } from "@/context/userDetailContext";
