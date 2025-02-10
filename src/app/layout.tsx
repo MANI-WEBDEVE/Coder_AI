@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
 import Provider from "./Provider";
 import ConvexClientProvider from "./ConvexClientProvider";
@@ -10,15 +9,20 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
+
+  
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const {toggleSidebar}=useSidebar()
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <ConvexClientProvider>
-          <Provider>{children}</Provider>
+          <Provider>
+            
+            {children}</Provider>
         </ConvexClientProvider>
       </body>
     </html>

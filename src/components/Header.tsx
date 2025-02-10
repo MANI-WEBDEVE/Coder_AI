@@ -4,6 +4,7 @@ import React, { useContext, useEffect } from "react";
 import { Button } from "./ui/button";
 import { UserDetailContext } from "@/context/userDetailContext";
 import Link from "next/link";
+import { Infinity } from "lucide-react";
 
 function Header() {
   const { user, setUser } = useContext(UserDetailContext);
@@ -29,7 +30,9 @@ function Header() {
             <h2 className="uppercase text-sm bg-slate-600/25 px-2 rounded-lg">
               {user.name}
             </h2>
-            <p className="truncate ">{user.token }</p>
+            <p className="truncate ">
+              {user.token > 10000000000000 ? <Infinity /> : user.token}
+            </p>
           </div>
         </>
       ) : (
