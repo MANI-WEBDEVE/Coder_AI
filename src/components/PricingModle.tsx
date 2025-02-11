@@ -1,31 +1,26 @@
-'use client'
+"use client";
 import Lookup from "@/data/Lookup";
 import React, { useContext } from "react";
-<<<<<<< HEAD
-=======
-import { loadStripe } from "@stripe/stripe-js";
->>>>>>> f410b72d9312a407c68f1241bdcd6bb6c90561de
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { UserDetailContext } from "@/context/userDetailContext";
 
 const PricingModle = () => {
-  const router=useRouter()
-  const {user,setUser}=useContext(UserDetailContext)
+  const router = useRouter();
+  const { user, setUser } = useContext(UserDetailContext);
 
   const handleCheckout = async (option: any) => {
-    
     try {
       const response = await axios.post("/api/checkout-payment", {
         token: option.value,
         price: option.price,
-        userId:user._id,
-        userToken:user.token
+        userId: user._id,
+        userToken: user.token,
       });
 
       const session = await response.data;
-      if(session.url){
-        router.push(session.url)
+      if (session.url) {
+        router.push(session.url);
       }
     } catch (e) {
       console.log("error", e);

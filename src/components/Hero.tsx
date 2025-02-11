@@ -44,7 +44,7 @@ function Hero() {
         <PanelLeftOpen onClick={toggleSidebar}/>
       </div>
 
-      <div className="flex flex-col items-center mt-36 xl:mt-42 gap-2 w-full">
+      <div className="flex flex-col items-center mt-36 px-5 xl:mt-42 gap-2 w-full">
         <h2 className="font-bold text-4xl">{Lookup.HERO_HEADING}</h2>
         <p className="text-gray-400 font-medium">{Lookup.HERO_DESC}</p>
         <div

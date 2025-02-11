@@ -9,6 +9,7 @@ import { useConvex } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { AppSideBar } from "@/components/AppSideBar";
+import Footer from "@/components/Footer";
 function Provider({ children }: { children: React.ReactNode }) {
   const [inputMessage, setInputMessage] = useState([
     {
@@ -62,6 +63,7 @@ function Provider({ children }: { children: React.ReactNode }) {
                 
                {children}
               </SidebarProvider>
+              <Footer/>
             </NextThemesProvider>
           </MessageContext.Provider>
         </UserDetailContext.Provider>

@@ -17,6 +17,8 @@ const page = () => {
 
   return (
     <>
+    <div className="flex flex-col items-start justify-start">
+      
       <div className="px-5 mb-10 mt-5 cursor-pointer ">
         <PanelLeftOpen onClick={toggleSidebar} />
       </div>
@@ -48,6 +50,8 @@ const page = () => {
         </div>
         <PricingModle/>
       </div>
+      
+    </div>
     </>
   );
 };
