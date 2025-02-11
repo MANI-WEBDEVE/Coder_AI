@@ -32,8 +32,8 @@ export async function POST(req:Request) {
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:3000/`,
-      cancel_url: `http://localhost:3000/cancel`,
+      success_url: process.env.PAYMENT_SUCCESS!,
+      cancel_url: process.env.PAYMENT_CANCEL!,
     });
     const updateTokenUser=await convex.mutation(api.users.updateToken, {
       userId,
