@@ -55,7 +55,8 @@ const SignInDailog = ({
         name: userInfo.data.name,
         email: userInfo.data.email,
         image: userInfo.data.picture,
-        _id: ''
+        _id: '',
+        token: 50000
       });
       closeDailog(false);
     },

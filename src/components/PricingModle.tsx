@@ -1,14 +1,22 @@
 "use client";
 import Lookup from "@/data/Lookup";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { UserDetailContext } from "@/context/userDetailContext";
+import SignInDailog from "./SignInDailog";
 
 const PricingModle = () => {
   const router = useRouter();
   const { user, setUser } = useContext(UserDetailContext);
-
+  const [openDailog, setOpenDailog] = useState(false)
+  
+    const signInUser=()=>{
+      if(!user.name){
+        setOpenDailog(true)
+        return
+      }
+    }
   const handleCheckout = async (option: any) => {
     try {
       const response = await axios.post("/api/checkout-payment", {
@@ -54,15 +62,27 @@ const PricingModle = () => {
           </p>
 
           <p className="text-gray-600 dark:text-gray-200 mb-8">{option.desc}</p>
-
+          {user.email&&user.name ? (<>
           <button
             onClick={() => handleCheckout(option)}
             className="w-full py-4 px-8 text-white font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-purple-700 hover:opacity-90 transition-opacity"
-          >
+            >
             Choose Plan
           </button>
+          </>):(<>
+            <button
+            onClick={signInUser}
+            className="w-full py-4 px-8 text-white font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-purple-700 hover:opacity-90 transition-opacity"
+            >
+            Login to Choose Plan
+          </button>
+          </>)}
         </div>
       ))}
+       <SignInDailog
+          openDailog={openDailog}
+          closeDailog={(e: boolean) => setOpenDailog(e)}
+        />
     </div>
   );
 };

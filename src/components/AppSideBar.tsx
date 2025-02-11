@@ -19,11 +19,11 @@ export function AppSideBar() {
         <Link href={'/'}>
         <div className="flex items-center gap-2 ">
           <Image
-            src={"/download.svg"}
-            width={50}
-            height={50}
+            src={"/coder-ai-logo.png"}
+            width={70}
+            height={70}
             alt="logo"
-            className="invert"
+            className=""
             />
           <Image src={"/logo.webp"} width={29} height={29} alt="logo" />
         </div>

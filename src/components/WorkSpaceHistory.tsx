@@ -14,7 +14,7 @@ const WorkSpaceHistory = () => {
     const [isLoading, setIsLoading] = useState(false)
     const convex = useConvex()
     useEffect(() => {
-        user&&GetAllUserData()
+        user?._id && user._id !== '' && GetAllUserData()
     }, [user])
     const GetAllUserData= async()=>{
         try{

@@ -10,6 +10,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { useSidebar } from "./ui/sidebar";
+import toast from "react-hot-toast";
 function Hero() {
   const {toggleSidebar}=useSidebar()
   const [userInput, setUserInput] = useState<string>("");
@@ -21,10 +22,14 @@ function Hero() {
   const router = useRouter();
   const createWorkSpace = useMutation(api.workspace.CreateWorkSpace);
   const onGenerate = async (input: string) => {
+    
     if (!user.name) {
-      console.log(user, "lo");
       setOpenDailog(true);
       return;
+    }
+    if(user.token < 20){
+      toast.error("You don't have enough token to generate workspace.Please buy token ")
+      return
     }
     const msg = {
       role: "user",
@@ -39,12 +44,12 @@ function Hero() {
   };
   return (
     <>
-      <div className="px-5 mb-10 mt-5 cursor-pointer ">
+      <div className="px-5 mt-3 cursor-pointer ">
         
         <PanelLeftOpen onClick={toggleSidebar}/>
       </div>
 
-      <div className="flex flex-col items-center mt-36 px-5 xl:mt-42 gap-2 w-full">
+      <div className="flex flex-col items-center mt-20 px-5 xl:mt-42 gap-2 w-full">
         <h2 className="font-bold text-4xl">{Lookup.HERO_HEADING}</h2>
         <p className="text-gray-400 font-medium">{Lookup.HERO_DESC}</p>
         <div

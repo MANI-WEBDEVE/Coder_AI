@@ -1,11 +1,7 @@
 import Stripe from "stripe";
 import { convex } from "@/lib/ConvexClient";
 import { api } from "../../../../convex/_generated/api";
-<<<<<<< HEAD
-const stripe = new Stripe('');
-=======
-const stripe = new Stripe('sk_test_51QfmiUA4gZBCCjpoZzcAQIo6yK5YeSwjnFthWOxrrpEcav8plceb4dSUGRAwBhxednzThhhp2BALVH1dfYpMJYaz00vuY9oixM');
->>>>>>> f410b72d9312a407c68f1241bdcd6bb6c90561de
+const stripe = new Stripe(process.env.SECRET_KEY_STRIPE! as string);
 
 export async function POST(req:Request) {
   try {

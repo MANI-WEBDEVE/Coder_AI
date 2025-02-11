@@ -19,7 +19,7 @@ const page = () => {
     <>
     <div className="flex flex-col items-start justify-start">
       
-      <div className="px-5 mb-10 mt-5 cursor-pointer ">
+      <div className="px-5  mt-5 cursor-pointer ">
         <PanelLeftOpen onClick={toggleSidebar} />
       </div>
       <div className="w-full h-full flex flex-col items-center mt-3 p-10 md:px-20 lg:px-36">

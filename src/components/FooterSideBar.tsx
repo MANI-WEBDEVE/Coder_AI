@@ -20,7 +20,8 @@ const FooterSideBar = () => {
             path:"/pricing"
         },{
             name:"Logout",
-            icon: LogOut
+            icon: LogOut,
+            val:"logout"
         }
     ]
 
@@ -30,11 +31,19 @@ const FooterSideBar = () => {
         }
     }
 
+    const logOut=(val:string)=>{
+        if(val==='logout'){
+            localStorage.removeItem('user')
+            window.location.reload()
+           
+        }
+    }
+
   return (
     <div className='p-2 mb-10'>
         {
             option.map((opt, index) => (
-                <Button key={index} className='flex justify-start gap-2' variant={"ghost"} onClick={()=>handleClick(opt)}>
+                <Button  key={index} className='flex justify-start gap-2' variant={"ghost"} onClick={()=> opt.val ? logOut(opt.val) : handleClick(opt)}>
                     <opt.icon/>
                     {opt.name}
                 </Button>

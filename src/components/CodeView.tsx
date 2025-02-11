@@ -17,6 +17,8 @@ import { useParams } from "next/navigation";
 import { Loader, Loader2 } from "lucide-react";
 import { countToken } from "./ChatView";
 import { UserDetailContext } from "@/context/userDetailContext";
+import SandPackPreviewClient from "./SandPackPreviewClient";
+import { ActionContext } from "@/context/ActionContext";
 function CodeView() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("code");
@@ -25,9 +27,9 @@ function CodeView() {
   const updateFiles = useMutation(api.workspace.updateFiles);
   const convex = useConvex();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const UpdateToken = useMutation(api.users.updateToken)
+  const UpdateToken = useMutation(api.users.updateToken);
   const { user, setUser } = useContext(UserDetailContext);
-
+    const { action, setAction } = useContext(ActionContext);
   const GetWorkSpaceFilesData = async () => {
     try {
       setIsLoading(true);
@@ -43,9 +45,13 @@ function CodeView() {
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     GetWorkSpaceFilesData();
   }, [id]);
+
+  useEffect(()=>{
+    setActiveTab('preview')
+  },[action])
 
   useEffect(() => {
     if (inputMessage.length > 0) {
@@ -71,13 +77,17 @@ function CodeView() {
         files: aiResp.files,
       });
 
-      const token =Number(user.token)-Number(countToken(JSON.stringify(aiResp)))
-            // update token in DataBase
-            await UpdateToken({
-              userId:user._id as any,
-              token:token
-            })
-
+      const token =
+        Number(user.token) - Number(countToken(JSON.stringify(aiResp)));
+      // update token in DataBase
+      await UpdateToken({
+        userId: user._id as any,
+        token: token,
+      });
+      setUser({
+        ...user,
+        token: token,
+      });
     } catch (err) {
       console.log(err);
     } finally {
@@ -103,37 +113,33 @@ function CodeView() {
           </h2>
         </div>
       </div>
-    
-          <SandpackProvider
-            template="react"
-            files={files}
-            theme={"dark"}
-            customSetup={{ dependencies: { ...Lookup.DEPENDANCY } }}
-            options={{
-              externalResources: ["https://unpkg.com/@tailwindcss/browser@4"],
-            }}
-          >
-            <SandpackLayout>
-              {activeTab == "code" ? (
-                <>
-                  <SandpackFileExplorer style={{ height: "82vh" }} />
-                  <SandpackCodeEditor style={{ height: "82vh" }} />
-                </>
-              ) : (
-                <SandpackPreview
-                  style={{ height: "82vh" }}
-                  showNavigator={true}
-                />
-              )}
-            </SandpackLayout>
-          </SandpackProvider>
-          {isLoading &&(
 
-            <div className="bg-[#181818cd] rounded w-full p-2 mt-2 flex items-center justify-center flex-col absolute h-full top-0 right-0">
-            <Loader className="animate-spin h-10 w-10" />
+      <SandpackProvider
+        template="react"
+        files={files}
+        theme={"dark"}
+        customSetup={{ dependencies: { ...Lookup.DEPENDANCY } }}
+        options={{
+          externalResources: ["https://unpkg.com/@tailwindcss/browser@4"],
+        }}
+      >
+        <SandpackLayout>
+          {activeTab == "code" ? (
+            <>
+              <SandpackFileExplorer style={{ height: "82vh" }} />
+              <SandpackCodeEditor style={{ height: "82vh" }} />
+            </>
+          ) : (
+            <SandPackPreviewClient/>
+          )}
+        </SandpackLayout>
+      </SandpackProvider>
+      {isLoading && (
+        <div className="bg-[#181818cd] rounded w-full p-2 mt-2 flex items-center justify-center flex-col absolute h-full top-0 right-0">
+          <Loader className="animate-spin h-10 w-10" />
           <h2 className="text-lg text-center  mt-2">Generating a Files 🤖</h2>
         </div>
-          )}
+      )}
     </div>
   );
 }
