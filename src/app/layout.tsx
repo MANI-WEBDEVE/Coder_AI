@@ -25,17 +25,6 @@ export default function RootLayout({
             
             {children}
             <Toaster 
-            position="bottom-right"
-            reverseOrder={false}
-            toastOptions={{
-              className: '',
-              style: {
-                border: '1px solid #713200',
-                padding: '16px',
-                color: '#fff',
-                backgroundColor:Colors.BACKGROUND
-              },
-            }}
             />
             </Provider>
         </ConvexClientProvider>

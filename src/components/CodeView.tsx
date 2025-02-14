@@ -19,6 +19,7 @@ import { countToken } from "./ChatView";
 import { UserDetailContext } from "@/context/userDetailContext";
 import SandPackPreviewClient from "./SandPackPreviewClient";
 import { ActionContext } from "@/context/ActionContext";
+import toast from "react-hot-toast";
 function CodeView() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState("code");
@@ -49,9 +50,9 @@ function CodeView() {
     GetWorkSpaceFilesData();
   }, [id]);
 
-  useEffect(()=>{
-    setActiveTab('preview')
-  },[action])
+  // useEffect(()=>{
+  //   setActiveTab('preview')
+  // },[action])
 
   useEffect(() => {
     if (inputMessage.length > 0) {
@@ -62,38 +63,90 @@ function CodeView() {
     }
   }, [inputMessage]);
 
-  const GenerateCodeAI = async () => {
-    const PROMPT = JSON.stringify(inputMessage) + " " + prompts.CODE_GEN_PROMPT;
-    try {
-      setIsLoading(true);
-      const response = await axios.post("/api/gen-ai-code", {
-        prompt: PROMPT,
-      });
-      const aiResp = response.data.data;
-      const mergedFile = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
-      setFiles(mergedFile);
-      await updateFiles({
-        workspaceId: id as any,
-        files: aiResp.files,
-      });
+  // const GenerateCodeAI = async () => {
+  //   const PROMPT = JSON.stringify(inputMessage) + " " + prompts.CODE_GEN_PROMPT;
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await axios.post("/api/gen-ai-code", {
+  //       prompt: PROMPT,
+  //     });
+  //     const aiResp = response.data.data;
+  //     const mergedFile = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
+  //     setFiles(mergedFile);
+  //     await updateFiles({
+  //       workspaceId: id as any,
+  //       files: aiResp.files,
+  //     });
 
-      const token =
-        Number(user.token) - Number(countToken(JSON.stringify(aiResp)));
-      // update token in DataBase
-      await UpdateToken({
-        userId: user._id as any,
-        token: token,
-      });
-      setUser({
-        ...user,
-        token: token,
-      });
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
+  //     const token =
+  //       Number(user.token) - Number(countToken(JSON.stringify(aiResp)));
+  //     // update token in DataBase
+  //     await UpdateToken({
+  //       userId: user._id as any,
+  //       token: token,
+  //     });
+  //     setUser({
+  //       ...user,
+  //       token: token,
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const GenerateCodeAI = async (retries = 3, delay = 5000) => {
+    const PROMPT = JSON.stringify(inputMessage) + " " + prompts.CODE_GEN_PROMPT;
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            setIsLoading(true);
+            console.log(`Attempt ${attempt} to call AI API...`);
+
+            const response = await axios.post("/api/gen-ai-code", {
+                prompt: PROMPT,
+            }, { timeout: 30000 }); // 30 seconds timeout
+
+            const aiResp = response.data.data;
+            const mergedFile = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
+            setFiles(mergedFile);
+
+            await updateFiles({
+                workspaceId: id as any,
+                files: aiResp.files,
+            });
+
+            const token = Number(user.token) - Number(countToken(JSON.stringify(aiResp)));
+            
+            // Update token in Database
+            await UpdateToken({
+                userId: user._id as any,
+                token: token,
+            });
+
+            setUser({
+                ...user,
+                token: token,
+            });
+            toast.success("Code generated successfully! Click the 'Run' button at the bottom left of the code tab to execute.", {duration:10000})
+            return; // Success, exit function
+
+        } catch (err:any) {
+            console.error(`Attempt ${attempt} failed:`, err.message );
+
+            if (attempt < retries) {
+                console.log(`Retrying in ${delay / 1000} seconds...`);
+                await new Promise(res => setTimeout(res, delay)); // Wait before retry
+            } else {
+              toast.error("Please Try Again Internal Server Issue")
+                console.error("All retry attempts failed.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
     }
-  };
+};
 
   return (
     <div className="relative">
