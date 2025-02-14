@@ -22,7 +22,6 @@ const WorkSpaceHistory = () => {
             const result = await convex.query(api.workspace.GetAllWorkSpace, {
                 userId: user._id as any
             })
-            console.log(result)
             setWorkSpace(result)
         }finally{
             setIsLoading(false)

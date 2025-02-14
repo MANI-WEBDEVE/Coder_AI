@@ -104,9 +104,11 @@ function CodeView() {
             setIsLoading(true);
             console.log(`Attempt ${attempt} to call AI API...`);
 
+            await new Promise(res => setTimeout(res, 5000)); // Wait for 5 seconds before making the API call
+
             const response = await axios.post("/api/gen-ai-code", {
                 prompt: PROMPT,
-            }, { timeout: 30000 }); // 30 seconds timeout
+            }, { timeout: 60000 }); // 30 seconds timeout
 
             const aiResp = response.data.data;
             const mergedFile = { ...Lookup.DEFAULT_FILE, ...aiResp.files };
